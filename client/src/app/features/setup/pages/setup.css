@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  gap: 1rem;
+}
+
+.categories {
+  width: 300px;
+}
+
+.menu-items {
+  flex: 1;
+}
