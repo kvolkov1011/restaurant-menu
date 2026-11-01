@@ -46,3 +46,21 @@
     max-width: 100%;
   }
 }
+
+/* The menu viewport only scrolls vertically. CDK gives its content wrapper a
+   min-width based on the widest rendered row, which can otherwise create a
+   nested horizontal scrollbar on narrow screens. */
+.menu-viewport,
+.menu-viewport .cdk-virtual-scroll-content-wrapper,
+.menu-viewport mat-list,
+.menu-viewport .menu-item,
+.menu-viewport .category-heading {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.menu-viewport {
+  overflow-x: hidden !important;
+}

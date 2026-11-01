@@ -15,5 +15,9 @@ export class App {
       path: 'setup',
       label: 'Setup',
     },
+    {
+      path: 'menu',
+      label: 'Menu',
+    },
   ];
 }

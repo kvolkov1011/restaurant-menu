@@ -1,7 +1,8 @@
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import {
   patchState,
   signalStore,
+  withComputed,
   withHooks,
   withMethods,
   withState,
@@ -19,6 +20,10 @@ type MenuState = {
   error: string | null;
 };
 
+export type MenuRow =
+  | { kind: 'category'; category: Category }
+  | { kind: 'item'; item: MenuItem };
+
 const initialState: MenuState = {
   categories: [],
   menuItems: [],
@@ -33,6 +38,20 @@ const getErrorMessage = (error: unknown): string =>
 export const MenuStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withComputed(({ categories, menuItems }) => ({
+    menuRows: computed<MenuRow[]>(() =>
+      categories()
+        .map((category) => ({
+          category,
+          items: menuItems().filter((item) => item.categoryId === category.id),
+        }))
+        .filter((group) => group.items.length > 0)
+        .flatMap(({ category, items }) => [
+          { kind: 'category' as const, category },
+          ...items.map((item) => ({ kind: 'item' as const, item })),
+        ]),
+    ),
+  })),
   withMethods((store, menuService = inject(MenuService)) => {
     const handleError = (error: unknown): Observable<never> => {
       patchState(store, {
