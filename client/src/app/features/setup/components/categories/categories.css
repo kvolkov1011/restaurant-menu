@@ -1,0 +1,26 @@
+.categories-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.category-item {
+  cursor: pointer;
+  transition: background-color 120ms ease-in-out;
+}
+
+.category-item:hover {
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+.category-item:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-item {
+    transition: none;
+  }
+}

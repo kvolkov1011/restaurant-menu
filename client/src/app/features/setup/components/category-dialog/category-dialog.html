@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Edit category' : 'Add category' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field>
+      <mat-label>ID</mat-label>
+      <input matInput formControlName="id" autocomplete="off" />
+      @if (form.controls.id.hasError('required')) {
+        <mat-error>ID is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" autocomplete="off" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Name is required.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+  <button mat-flat-button type="button" [disabled]="form.invalid" (click)="save()">
+    {{ isEditing ? 'Save changes' : 'Add category' }}
+  </button>
+</mat-dialog-actions>

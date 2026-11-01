@@ -1,15 +1,15 @@
 import express from 'express';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
+import categoriesRouter from './routing/categories';
 
 const PORT = 3000;
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-app.get('/', (req, res) => {
-  res.send('<h1>Hello world</h1>');
-});
+app.use(express.json());
+app.use('/', categoriesRouter);
 
 server.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);

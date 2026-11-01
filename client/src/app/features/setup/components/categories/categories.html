@@ -1,1 +1,41 @@
-Categories
+<header class="categories-header">
+  <h2>Categories</h2>
+  <button mat-flat-button type="button" (click)="addCategory()">
+    Add category
+  </button>
+</header>
+
+<section>
+  @if (error()) {
+    <div>Could not load categories.</div>
+  } @else if (isLoading()) {
+    <div>Loading categories...</div>
+  } @else {
+    <mat-list aria-label="Categories">
+      @for (category of categories(); track category.id) {
+        <mat-list-item
+          class="category-item"
+          role="button"
+          tabindex="0">
+          <span matListItemTitle>{{ category.name }}</span>
+
+          <span matListItemMeta>
+            <button
+              mat-button
+              type="button"
+              (click)="editCategory(category)">
+              Edit
+            </button>
+            <button
+              mat-button
+              class="mat-warn"
+              type="button"
+              (click)="deleteCategory(category)">
+              Delete
+            </button>
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+</section>

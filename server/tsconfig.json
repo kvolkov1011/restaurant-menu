@@ -6,8 +6,12 @@
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "rootDir": "src",
-    "skipLibCheck": true
+    "rootDir": "..",
+    "skipLibCheck": true,
+    "paths": {
+      "@data": ["./src/data/index.ts"],
+      "@common": ["./../common/index.ts"]
+    }
   },
   "include": ["src/**/*.ts"]
 }
