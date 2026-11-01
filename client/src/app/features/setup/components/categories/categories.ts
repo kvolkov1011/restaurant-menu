@@ -1,11 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import {
   MatList,
   MatListItem,
   MatListItemMeta,
   MatListItemTitle,
 } from '@angular/material/list';
-import { MatButton } from '@angular/material/button';
+import {
+  MatButton,
+  MatIconButton,
+} from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { Category } from '@common';
 import { MenuStore } from '@shared/store';
@@ -20,6 +25,9 @@ import {
   styleUrl: './categories.css',
   imports: [
     MatButton,
+    MatIconButton,
+    MatIcon,
+    MatTooltip,
     MatList,
     MatListItem,
     MatListItemMeta,
@@ -32,7 +40,10 @@ export class CategoriesComponent {
 
   readonly categories = this.#menuStore.categories;
   readonly error = this.#menuStore.error;
-  readonly isLoading = this.#menuStore.isLoading;
+  readonly isLoading = this.#menuStore.categoriesLoading;
+
+  /** Hides the panel heading when the section is labelled by a tab. */
+  readonly showHeading = input(true);
 
   addCategory(): void {
     this.openCategoryDialog();

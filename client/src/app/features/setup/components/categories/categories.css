@@ -1,26 +1,59 @@
-.categories-header {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
+:host {
+  display: block;
+  background-color: var(--mat-sys-surface-container-low);
+  border-radius: var(--mat-sys-corner-lg);
+  outline: 1px solid var(--mat-sys-outline-variant);
+  outline-offset: -1px;
+  overflow: hidden;
 
-.category-item {
-  cursor: pointer;
-  transition: background-color 120ms ease-in-out;
-}
+  .categories-header {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 16px 16px 8px;
 
-.category-item:hover {
-  background-color: var(--mat-sys-surface-container-high);
-}
+    h2 {
+      font: var(--mat-sys-title-medium);
+      margin: 0;
+    }
 
-.category-item:focus-visible {
-  outline: 2px solid var(--mat-sys-primary);
-  outline-offset: -2px;
-}
+    button {
+      flex: none;
+      white-space: nowrap;
+    }
 
-@media (prefers-reduced-motion: reduce) {
+    &.compact {
+      justify-content: flex-end;
+    }
+  }
+
+  .status {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0;
+    padding: 16px;
+  }
+
+  /* Rows are not interactive (only their action buttons are): no focus state,
+     and the hover highlight is purely a scanning aid. */
   .category-item {
-    transition: none;
+    transition: background-color 120ms ease-in-out;
+
+    &:hover {
+      background-color: var(--mat-sys-surface-container-high);
+    }
+
+    /* Material pins the meta column to the top of the stretched flex row. */
+    [matListItemMeta] {
+      align-self: center;
+    }
+
+    .delete-action:not(:disabled) {
+      color: var(--mat-sys-error);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 }

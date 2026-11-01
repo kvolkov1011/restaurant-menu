@@ -1,0 +1,17 @@
+:host {
+  mat-dialog-content {
+    overflow-x: hidden;
+
+    form {
+      display: grid;
+      gap: 0.5rem;
+      box-sizing: border-box;
+      min-width: 0;
+      width: min(32rem, 100%);
+
+      mat-form-field {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background-color: var(--mat-sys-surface-container-low);
+  border-radius: var(--mat-sys-corner-lg);
+  outline: 1px solid var(--mat-sys-outline-variant);
+  outline-offset: -1px;
+  overflow: hidden;
+
+  .menu-items-header {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 16px 16px 8px;
+
+    h2 {
+      font: var(--mat-sys-title-medium);
+      margin: 0;
+    }
+
+    button {
+      flex: none;
+      white-space: nowrap;
+    }
+
+    &.compact {
+      justify-content: flex-end;
+    }
+  }
+
+  .status {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0;
+    padding: 16px;
+  }
+
+  section {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .menu-items-viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    .cdk-virtual-scroll-content-wrapper,
+    mat-list {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    mat-list {
+      padding-block: 0;
+    }
+  }
+
+  /* Rows are not interactive (only their action buttons are): no focus state,
+     and the hover highlight is purely a scanning aid. */
+  .menu-item {
+    width: 100%;
+    min-width: 0;
+
+    transition: background-color 120ms ease-in-out;
+
+    &:hover {
+      background-color: var(--mat-sys-surface-container-high);
+    }
+
+    /* Keep the leading control and trailing actions vertically centered. */
+    [matListItemIcon],
+    [matListItemMeta] {
+      align-self: center;
+    }
+
+    /* Disabled items: mute the content (M3 disabled content opacity) but keep the
+       action buttons at full strength so they can re-enable the item. */
+    &.is-disabled {
+      [matListItemTitle],
+      [matListItemLine] {
+        opacity: 0.38;
+      }
+    }
+
+    .delete-action:not(:disabled) {
+      color: var(--mat-sys-error);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}

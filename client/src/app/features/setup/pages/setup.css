@@ -1,12 +1,23 @@
 :host {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Single row that fills the page height instead of growing with content, so
+     the tab body's own scroller handles long lists. */
+  grid-template-rows: minmax(0, 1fr);
   gap: 1rem;
-}
-
-.categories {
-  width: 300px;
-}
-
-.menu-items {
+  /* Explicit width: as a flex item of the shell, `margin-inline: auto` would
+     otherwise shrink the page to fit-content instead of stretching it. */
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-block: 1rem 2rem;
+  box-sizing: border-box;
   flex: 1;
+  /* Defeat the automatic content-based minimum of a flex item so the grid row
+     above stays definite and long lists scroll inside the tab body. */
+  min-height: 0;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  }
 }

@@ -1,20 +1,27 @@
 :host {
-  min-height: 100dvh;
+  /* Definite height (not just min-height) so the flex/grid chain below can
+     resolve sizes and long content overflows into normal page scrolling. */
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-}
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
 
-  .sitename {
-    margin-right: auto;
+    .sitename {
+      margin-right: auto;
+    }
   }
-}
 
-.main {
-  flex: 1;
-  padding-inline: 16px;
+  .main {
+    flex: 1;
+    /* Defeat the automatic content-based minimum of a flex item: pages fill the
+       shell and overflow visibly instead of stretching it. */
+    min-height: 0;
+    padding-inline: 16px;
+    display: flex;
+    flex-direction: column;
+  }
 }

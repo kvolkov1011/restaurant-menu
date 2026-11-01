@@ -8,18 +8,22 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, catchError, pipe, switchMap, tap } from 'rxjs';
-import { Category } from '@common';
+import { Category, MenuItem } from '@common';
 import { MenuService } from '../services';
 
 type MenuState = {
   categories: Category[];
-  isLoading: boolean;
+  menuItems: MenuItem[];
+  categoriesLoading: boolean;
+  menuItemsLoading: boolean;
   error: string | null;
 };
 
 const initialState: MenuState = {
   categories: [],
-  isLoading: false,
+  menuItems: [],
+  categoriesLoading: false,
+  menuItemsLoading: false,
   error: null,
 };
 
@@ -33,7 +37,8 @@ export const MenuStore = signalStore(
     const handleError = (error: unknown): Observable<never> => {
       patchState(store, {
         error: getErrorMessage(error),
-        isLoading: false,
+        categoriesLoading: false,
+        menuItemsLoading: false,
       });
       return EMPTY;
     };
@@ -43,8 +48,20 @@ export const MenuStore = signalStore(
         tap((categories) =>
           patchState(store, {
             categories,
+            categoriesLoading: false,
             error: null,
-            isLoading: false,
+          }),
+        ),
+        catchError(handleError),
+      );
+
+    const refreshMenuItems = (): Observable<MenuItem[]> =>
+      menuService.getMenuItems().pipe(
+        tap((menuItems) =>
+          patchState(store, {
+            menuItems,
+            menuItemsLoading: false,
+            error: null,
           }),
         ),
         catchError(handleError),
@@ -53,13 +70,14 @@ export const MenuStore = signalStore(
     return {
       loadCategories: rxMethod<void>(
         pipe(
-          tap(() => patchState(store, { error: null, isLoading: true })),
+          tap(() => patchState(store, { categoriesLoading: true, error: null })),
           switchMap(() => refreshCategories()),
         ),
       ),
+      // Mutations keep the current list on screen: only the initial load*()
+      // calls set the loading flag, so the list does not blink on every change.
       createCategory: rxMethod<Category>(
         pipe(
-          tap(() => patchState(store, { error: null, isLoading: true })),
           switchMap((category) =>
             menuService.createCategory(category).pipe(
               switchMap(() => refreshCategories()),
@@ -70,7 +88,6 @@ export const MenuStore = signalStore(
       ),
       updateCategory: rxMethod<Category>(
         pipe(
-          tap(() => patchState(store, { error: null, isLoading: true })),
           switchMap((category) =>
             menuService.updateCategory(category).pipe(
               switchMap(() => refreshCategories()),
@@ -81,7 +98,6 @@ export const MenuStore = signalStore(
       ),
       deleteCategory: rxMethod<string>(
         pipe(
-          tap(() => patchState(store, { error: null, isLoading: true })),
           switchMap((id) =>
             menuService.deleteCategory(id).pipe(
               switchMap(() => refreshCategories()),
@@ -90,11 +106,48 @@ export const MenuStore = signalStore(
           ),
         ),
       ),
+      loadMenuItems: rxMethod<void>(
+        pipe(
+          tap(() => patchState(store, { menuItemsLoading: true, error: null })),
+          switchMap(() => refreshMenuItems()),
+        ),
+      ),
+      createMenuItem: rxMethod<MenuItem>(
+        pipe(
+          switchMap((menuItem) =>
+            menuService.createMenuItem(menuItem).pipe(
+              switchMap(() => refreshMenuItems()),
+              catchError(handleError),
+            ),
+          ),
+        ),
+      ),
+      updateMenuItem: rxMethod<MenuItem>(
+        pipe(
+          switchMap((menuItem) =>
+            menuService.updateMenuItem(menuItem).pipe(
+              switchMap(() => refreshMenuItems()),
+              catchError(handleError),
+            ),
+          ),
+        ),
+      ),
+      deleteMenuItem: rxMethod<string>(
+        pipe(
+          switchMap((id) =>
+            menuService.deleteMenuItem(id).pipe(
+              switchMap(() => refreshMenuItems()),
+              catchError(handleError),
+            ),
+          ),
+        ),
+      ),
     };
   }),
   withHooks({
-    onInit({ loadCategories }) {
+    onInit({ loadCategories, loadMenuItems }) {
       loadCategories();
+      loadMenuItems();
     },
   }),
 );
