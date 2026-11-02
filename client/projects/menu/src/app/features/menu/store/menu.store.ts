@@ -9,11 +9,11 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, catchError, pipe, switchMap, tap } from 'rxjs';
-import { Category, MenuItem } from '@common';
+import { CategorySummary, MenuItem } from '@common';
 import { MenuService } from '../services/menu.service';
 
 type MenuState = {
-  categories: Category[];
+  categories: CategorySummary[];
   menuItems: MenuItem[];
   categoriesLoading: boolean;
   menuItemsLoading: boolean;
@@ -21,7 +21,7 @@ type MenuState = {
 };
 
 export type MenuRow =
-  | { kind: 'category'; category: Category }
+  | { kind: 'category'; category: CategorySummary }
   | { kind: 'item'; item: MenuItem };
 
 const initialState: MenuState = {
@@ -65,45 +65,57 @@ export const MenuStore = signalStore(
         }),
       );
 
-    return {
-      loadCategories: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { categoriesLoading: true, error: null })),
-          switchMap(() =>
-            load(menuService.getCategories()).pipe(
-              tap((categories) =>
-                patchState(store, {
-                  categories,
-                  categoriesLoading: false,
-                  error: null,
-                }),
-              ),
+    const loadCategories = rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, { categoriesLoading: true, error: null })),
+        switchMap(() =>
+          load(menuService.getCategories()).pipe(
+            tap((categories) =>
+              patchState(store, {
+                categories,
+                categoriesLoading: false,
+                error: null,
+              }),
             ),
           ),
         ),
       ),
-      loadMenuItems: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { menuItemsLoading: true, error: null })),
-          switchMap(() =>
-            load(menuService.getMenuItems()).pipe(
-              tap((menuItems) =>
-                patchState(store, {
-                  menuItems,
-                  menuItemsLoading: false,
-                  error: null,
-                }),
-              ),
+    );
+
+    const loadMenuItems = rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, { menuItemsLoading: true, error: null })),
+        switchMap(() =>
+          load(menuService.getMenuItems()).pipe(
+            tap((menuItems) =>
+              patchState(store, {
+                menuItems,
+                menuItemsLoading: false,
+                error: null,
+              }),
             ),
           ),
         ),
       ),
-    };
+    );
+
+    const watchChanges = rxMethod<void>(
+      pipe(
+        switchMap(() => menuService.menuChanges$),
+        tap(() => {
+          loadCategories();
+          loadMenuItems();
+        }),
+      ),
+    );
+
+    return { loadCategories, loadMenuItems, watchChanges };
   }),
   withHooks({
-    onInit({ loadCategories, loadMenuItems }) {
+    onInit({ loadCategories, loadMenuItems, watchChanges }) {
       loadCategories();
       loadMenuItems();
+      watchChanges();
     },
   }),
 );

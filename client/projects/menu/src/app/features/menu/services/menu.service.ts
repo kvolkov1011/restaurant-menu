@@ -1,16 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Category, MenuItem } from '@common';
+import { fromEvent, Observable } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
+import { CategorySummary, MenuItem } from '@common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MenuService {
   readonly #http = inject(HttpClient);
+  readonly #socket: Socket = io();
 
-  getCategories(): Observable<Category[]> {
-    return this.#http.get<Category[]>('/api/categories');
+  readonly menuChanges$ = fromEvent(this.#socket, 'menu-changed');
+
+  getCategories(): Observable<CategorySummary[]> {
+    return this.#http.get<CategorySummary[]>('/api/categories');
   }
 
   getMenuItems(): Observable<MenuItem[]> {

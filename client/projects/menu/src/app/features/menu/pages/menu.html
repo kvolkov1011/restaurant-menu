@@ -18,15 +18,17 @@
       (click)="selectCategory(null)">
       See all
     </button>
-    @for (category of categories(); track category.id) {
+    @for (category of visibleCategories(); track category.id) {
       <button
         mat-button
         type="button"
         class="category-button"
         [class.selected]="selectedCategoryId() === category.id"
         [attr.aria-pressed]="selectedCategoryId() === category.id"
+        [attr.aria-label]="'Filter by ' + category.name + ', ' + category.itemCount + ' ' + (category.itemCount === 1 ? 'item' : 'items')"
         (click)="selectCategory(category.id)">
         {{ category.name }}
+        <span class="category-count" aria-hidden="true">{{ category.itemCount }}</span>
       </button>
     }
   </nav>
@@ -48,10 +50,22 @@
             @if (row.kind === 'category') {
               <mat-list-item class="category-heading">
                 <span matListItemTitle>{{ row.category.name }}</span>
+                <span matListItemMeta class="category-count-label">
+                  {{ row.category.itemCount }}
+                  {{ row.category.itemCount === 1 ? 'dish' : 'dishes' }}
+                </span>
               </mat-list-item>
             } @else {
-              <mat-list-item class="menu-item">
-                <span matListItemTitle>{{ row.item.name }}</span>
+              <mat-list-item
+                class="menu-item"
+                [class.is-disabled]="!row.item.enabled"
+                [attr.aria-disabled]="!row.item.enabled">
+                <span matListItemTitle>
+                  {{ row.item.name }}
+                  @if (!row.item.enabled) {
+                    <span class="availability-badge">Not available</span>
+                  }
+                </span>
                 @if (row.item.description) {
                   <span matListItemLine>{{ row.item.description }}</span>
                 }

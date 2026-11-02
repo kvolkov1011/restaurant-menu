@@ -3,6 +3,10 @@ export type Category = {
   name: string;
 }
 
+export type CategorySummary = Category & {
+  itemCount: number;
+}
+
 export type MenuItem = {
   id: string;
   categoryId: Category['id'];

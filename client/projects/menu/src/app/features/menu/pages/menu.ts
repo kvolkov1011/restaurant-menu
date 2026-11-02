@@ -16,7 +16,13 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatList, MatListItem, MatListItemLine, MatListItemTitle } from '@angular/material/list';
+import {
+  MatList,
+  MatListItem,
+  MatListItemLine,
+  MatListItemMeta,
+  MatListItemTitle,
+} from '@angular/material/list';
 import { MenuRow, MenuStore } from '../store/menu.store';
 
 @Component({
@@ -30,6 +36,7 @@ import { MenuRow, MenuStore } from '../store/menu.store';
     MatList,
     MatListItem,
     MatListItemLine,
+    MatListItemMeta,
     MatListItemTitle,
     CdkVirtualForOf,
     CdkVirtualScrollViewport,
@@ -43,6 +50,9 @@ export class MenuPage {
   #viewport?: CdkVirtualScrollViewport;
 
   readonly categories = this.#menuStore.categories;
+  readonly visibleCategories = computed(() =>
+    this.categories().filter((category) => category.itemCount > 0),
+  );
   readonly error = this.#menuStore.error;
   readonly isLoading = this.#menuStore.menuItemsLoading;
   readonly selectedCategoryId = signal<string | null>(null);

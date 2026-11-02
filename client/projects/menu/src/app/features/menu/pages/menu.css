@@ -79,6 +79,25 @@
       background-color: var(--mat-sys-secondary-container);
       color: var(--mat-sys-on-secondary-container);
     }
+
+    .category-count {
+      display: inline-flex;
+      min-width: 1.5em;
+      height: 1.5em;
+      align-items: center;
+      justify-content: center;
+      margin-inline-start: 6px;
+      padding-inline: 3px;
+      border-radius: 999px;
+      background-color: var(--mat-sys-surface-container-high);
+      color: var(--mat-sys-on-surface-variant);
+      font: var(--mat-sys-label-small);
+    }
+
+    &.selected .category-count {
+      background-color: var(--mat-sys-secondary);
+      color: var(--mat-sys-on-secondary);
+    }
   }
 }
 
@@ -115,12 +134,14 @@
   }
 
   .category-heading {
-    background-color: var(--mat-sys-surface-container);
+    background-color: var(--mat-sys-secondary-container);
+    border-inline-start: 5px solid var(--mat-sys-secondary);
 
     [matListItemTitle] {
-      color: var(--mat-sys-primary);
+      color: var(--mat-sys-on-secondary-container);
       font: var(--mat-sys-title-medium);
     }
+
   }
 
   .menu-item {
@@ -138,6 +159,39 @@
     .user-price {
       color: var(--mat-sys-tertiary);
       font: var(--mat-sys-label-large);
+    }
+
+    .availability-badge {
+      display: inline-flex;
+      align-items: center;
+      margin-inline-start: 8px;
+      padding: 2px 7px;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: 999px;
+      color: var(--mat-sys-on-surface-variant);
+      font: var(--mat-sys-label-small);
+      font-weight: 600;
+      vertical-align: middle;
+    }
+
+    &.is-disabled {
+      background-color: var(--mat-sys-surface-container);
+      border-inline-start: 4px solid var(--mat-sys-outline);
+      cursor: not-allowed;
+
+      [matListItemTitle],
+      [matListItemLine] {
+        color: var(--mat-sys-on-surface-variant);
+      }
+
+      .price,
+      .user-price {
+        color: var(--mat-sys-on-surface-variant);
+      }
+
+      &:hover {
+        background-color: var(--mat-sys-surface-container);
+      }
     }
   }
 }

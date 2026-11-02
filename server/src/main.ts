@@ -8,6 +8,7 @@ const PORT = 3000;
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
+app.locals.io = io;
 
 app.use(express.json());
 app.use('/', categoriesRouter);
