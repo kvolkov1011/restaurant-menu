@@ -41,14 +41,11 @@
     } @else if (visibleMenuRows().length === 0) {
       <div class="status">No menu positions in this category.</div>
     } @else {
-      <cdk-virtual-scroll-viewport
-        class="menu-viewport"
-        [itemSize]="88"
-        aria-label="Menu positions">
+      <cdk-virtual-scroll-viewport class="menu-viewport" aria-label="Menu positions">
         <mat-list>
-          <ng-container *cdkVirtualFor="let row of visibleMenuRows(); trackBy: trackRow">
+          <ng-container *cdkVirtualFor="let row of visibleMenuRows(); let rowIndex = index; trackBy: trackRow">
             @if (row.kind === 'category') {
-              <mat-list-item class="category-heading">
+              <mat-list-item class="menu-row category-heading" [attr.data-menu-row-index]="rowIndex">
                 <span matListItemTitle>{{ row.category.name }}</span>
                 <span matListItemMeta class="category-count-label">
                   {{ row.category.itemCount }}
@@ -57,7 +54,8 @@
               </mat-list-item>
             } @else {
               <mat-list-item
-                class="menu-item"
+                class="menu-row menu-item"
+                [attr.data-menu-row-index]="rowIndex"
                 [class.is-disabled]="!row.item.enabled"
                 [attr.aria-disabled]="!row.item.enabled">
                 <span matListItemTitle>
@@ -74,6 +72,17 @@
                 } @else {
                   <span matListItemLine class="price">{{ row.item.price | currency: 'USD' }}</span>
                 }
+                <span matListItemMeta class="menu-item-action">
+                  <button
+                    mat-flat-button
+                    type="button"
+                    class="add-button"
+                    [disabled]="!row.item.enabled"
+                    [attr.aria-label]="'Add ' + row.item.name + ' to cart'"
+                    (click)="addToCart(row.item)">
+                    <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
+                  </button>
+                </span>
               </mat-list-item>
             }
           </ng-container>
@@ -81,4 +90,113 @@
       </cdk-virtual-scroll-viewport>
     }
   </section>
+
+  <section class="cart-dock" [class.is-open]="cartOpen()" aria-label="Shopping cart">
+    <button
+      type="button"
+      class="cart-summary"
+      [class.is-empty]="cartItems().length === 0"
+      [attr.aria-expanded]="cartOpen()"
+      [disabled]="cartItems().length === 0"
+      (click)="toggleCart()">
+      <span class="cart-summary-icon"><mat-icon aria-hidden="true">shopping_bag</mat-icon></span>
+      <span class="cart-summary-copy">
+        <strong>{{ cartItems().length === 0 ? 'Your cart is empty' : cartCount() > 0 ? cartCount() + ' ' + (cartCount() === 1 ? 'item' : 'items') : cartItems().length + ' unavailable' }}</strong>
+        <span>{{ cartItems().length === 0 ? 'Add something from the menu' : cartCount() > 0 ? 'Tap to review your order' : 'Remove unavailable items to continue' }}</span>
+      </span>
+      @if (cartItems().length > 0) {
+        <span class="cart-summary-total">{{ cartTotal() | currency: 'USD' }}</span>
+        <mat-icon class="cart-chevron" aria-hidden="true">{{ cartOpen() ? 'expand_more' : 'expand_less' }}</mat-icon>
+      }
+    </button>
+
+    @if (cartOpen()) {
+      <div class="cart-panel">
+        <div class="cart-panel-header">
+          <div>
+            <span class="eyebrow">Ready when you are</span>
+            <h2>Your order</h2>
+          </div>
+          <button mat-icon-button type="button" aria-label="Close cart" (click)="toggleCart()">
+            <mat-icon aria-hidden="true">close</mat-icon>
+          </button>
+        </div>
+        <div class="cart-items">
+          @for (cartItem of cartItems(); track cartItem.item.id) {
+            <article class="cart-item" [class.is-unavailable]="!cartItem.item.enabled">
+              <div class="cart-item-info">
+                <strong>{{ cartItem.item.name }}</strong>
+                @if (cartItem.item.description) {
+                  <span class="cart-item-description">{{ cartItem.item.description }}</span>
+                }
+                @if (!cartItem.item.enabled) {
+                  <span class="cart-item-unavailable">Unavailable</span>
+                }
+                @if (cartItem.item.userPrice) {
+                  <label>
+                    Price
+                    <span class="price-input-wrap">
+                      <span>$</span>
+                      <input
+                        type="number"
+                        [min]="cartItem.item.price"
+                        step="0.01"
+                        [value]="cartItem.price"
+                        [disabled]="!cartItem.item.enabled"
+                        [attr.aria-label]="'Price for ' + cartItem.item.name"
+                        (change)="updateCartPrice(cartItem.item.id, $any($event.target).value)" />
+                    </span>
+                  </label>
+                } @else {
+                  <span>{{ cartItem.price | currency: 'USD' }} each</span>
+                }
+              </div>
+              <div class="quantity-control" aria-label="Quantity">
+                <button type="button" [disabled]="!cartItem.item.enabled" [attr.aria-label]="'Remove one ' + cartItem.item.name" (click)="changeQuantity(cartItem.item.id, -1)">−</button>
+                <span>{{ cartItem.quantity }}</span>
+                <button type="button" [disabled]="!cartItem.item.enabled" [attr.aria-label]="'Add one ' + cartItem.item.name" (click)="changeQuantity(cartItem.item.id, 1)">+</button>
+              </div>
+              <strong class="cart-item-total">{{ cartItem.price * cartItem.quantity | currency: 'USD' }}</strong>
+              <button
+                mat-icon-button
+                type="button"
+                class="cart-delete"
+                [attr.aria-label]="'Remove ' + cartItem.item.name + ' from cart'"
+                (click)="removeFromCart(cartItem.item.id)">
+                <mat-icon aria-hidden="true">delete_outline</mat-icon>
+              </button>
+            </article>
+          }
+        </div>
+        <div class="order-summary">
+          <div><span>Subtotal</span><strong>{{ cartSubtotal() | currency: 'USD' }}</strong></div>
+          <div class="discount"><span>House discount · 10%</span><strong>−{{ cartDiscount() | currency: 'USD' }}</strong></div>
+          <div class="total"><span>Total</span><strong>{{ cartTotal() | currency: 'USD' }}</strong></div>
+        </div>
+        <button mat-flat-button color="primary" class="checkout-button" type="button" [disabled]="availableCartItems().length === 0">Checkout</button>
+      </div>
+    }
+  </section>
+
+  @if (priceDialogItem(); as item) {
+    <div class="price-dialog-backdrop" role="presentation" (click)="cancelUserPrice()">
+      <section class="price-dialog" role="dialog" aria-modal="true" aria-labelledby="price-dialog-title" (click)="$event.stopPropagation()">
+        <span class="eyebrow">Choose your amount</span>
+        <h2 id="price-dialog-title">{{ item.name }}</h2>
+        <p>Enter the amount you’d like to pay before adding it to your order.</p>
+        <label class="dialog-price-label" for="dialog-price">Your price</label>
+        <div class="dialog-price-input">
+          <span>$</span>
+          <input id="dialog-price" type="number" [min]="item.price" step="0.01" [placeholder]="item.price.toFixed(2)" [value]="priceDraft()" (input)="setPriceDraft($any($event.target).value)" (keyup.enter)="confirmUserPrice()" />
+        </div>
+        @if (priceDraft() && +priceDraft() < item.price) {
+          <p class="price-error" role="alert">Enter at least {{ item.price | currency: 'USD' }}.</p>
+        }
+        <div class="dialog-actions">
+          <button mat-button type="button" (click)="cancelUserPrice()">Cancel</button>
+          <button mat-flat-button color="primary" type="button" [disabled]="!priceDraft() || +priceDraft() < item.price" (click)="confirmUserPrice()">Add to cart</button>
+        </div>
+      </section>
+    </div>
+  }
 </section>

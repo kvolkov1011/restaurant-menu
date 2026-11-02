@@ -47,14 +47,12 @@
   }
 }
 
-/* The menu viewport only scrolls vertically. CDK gives its content wrapper a
-   min-width based on the widest rendered row, which can otherwise create a
-   nested horizontal scrollbar on narrow screens. */
+/* Keep menu rows inside the page width without creating a nested horizontal
+   scrollbar when names or descriptions are long. */
 .menu-viewport,
 .menu-viewport .cdk-virtual-scroll-content-wrapper,
 .menu-viewport mat-list,
-.menu-viewport .menu-item,
-.menu-viewport .category-heading {
+.menu-viewport .menu-row {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
@@ -63,4 +61,14 @@
 
 .menu-viewport {
   overflow-x: hidden !important;
+}
+
+/* The trailing action is projected by MatListItem, so its alignment must be
+   global rather than component-scoped. */
+.mat-mdc-list-item .menu-item-action {
+  display: flex !important;
+  height: 100%;
+  box-sizing: border-box;
+  align-items: center !important;
+  padding-inline-end: 10px;
 }
