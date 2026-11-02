@@ -1,0 +1,19 @@
+<header class="header">
+  <mat-toolbar>
+    <span class="sitename">Restaurant Ordering Setup</span>
+    @for (item of navItems; track item.path) {
+      <a
+        mat-button
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </mat-toolbar>
+</header>
+
+<main class="main">
+  <router-outlet />
+</main>

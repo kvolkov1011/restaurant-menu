@@ -1,0 +1,44 @@
+<header class="page-header" [class.compact]="!showHeading()">
+  @if (showHeading()) {
+    <h2>Categories</h2>
+  }
+  <button mat-flat-button type="button" (click)="addCategory()">
+    Add category
+  </button>
+</header>
+
+<section>
+  @if (error()) {
+    <div class="status">Could not load categories.</div>
+  } @else if (isLoading()) {
+    <div class="status">Loading categories...</div>
+  } @else {
+    <mat-list aria-label="Categories">
+      @for (category of categories(); track category.id) {
+        <mat-list-item class="category-item">
+          <span matListItemTitle>{{ category.name }}</span>
+
+          <span matListItemMeta>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Edit {{ category.name }}"
+              [matTooltip]="'Edit ' + category.name"
+              (click)="editCategory(category)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="delete-action"
+              type="button"
+              aria-label="Delete {{ category.name }}"
+              [matTooltip]="'Delete ' + category.name"
+              (click)="deleteCategory(category)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+</section>

@@ -1,0 +1,21 @@
+:host {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-block: 0 2rem;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-height: calc(100% - 3rem);
+}
+
+/* Keep the page width and height behavior stable across the desktop/mobile
+   breakpoint; each routed page now owns one list panel. */
+@media (min-width: 1024px) {
+  :host {
+    padding-inline: 0;
+  }
+}

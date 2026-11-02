@@ -1,0 +1,182 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: auto;
+
+  .page-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--mat-sys-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 16px 8px;
+
+    .page-header-main {
+      align-items: center;
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+
+      h2 {
+        font: var(--mat-sys-title-medium);
+        margin: 0;
+      }
+    }
+
+    button {
+      flex: none;
+      white-space: nowrap;
+    }
+
+    &.compact {
+      justify-content: flex-end;
+    }
+  }
+
+  .filters {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .category-nav {
+    display: flex;
+    flex: 1 1 auto;
+    gap: 4px;
+    min-width: 0;
+    overflow-x: auto;
+    padding: 2px 0;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-button {
+      color: var(--mat-sys-on-surface-variant);
+      flex: none;
+      min-height: 36px;
+      white-space: nowrap;
+
+      &.selected {
+        background-color: var(--mat-sys-secondary-container);
+        color: var(--mat-sys-on-secondary-container);
+      }
+    }
+  }
+
+  .search-field {
+    align-items: center;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 1 240px;
+    gap: 6px;
+    min-height: 36px;
+    padding-inline: 10px;
+
+    mat-icon {
+      color: var(--mat-sys-on-surface-variant);
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+
+    input {
+      background: transparent;
+      border: 0;
+      color: var(--mat-sys-on-surface);
+      font: var(--mat-sys-body-small);
+      min-width: 0;
+      outline: 0;
+      width: 100%;
+
+      &::-webkit-search-cancel-button {
+        appearance: none;
+      }
+
+      &::placeholder {
+        color: var(--mat-sys-on-surface-variant);
+      }
+    }
+
+    .clear-search {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      flex: none;
+      height: 32px;
+      justify-content: center;
+      padding: 0;
+      width: 32px;
+
+      mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+      }
+    }
+  }
+
+  .status {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0;
+    padding: 16px;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  mat-list {
+    padding-block: 0;
+  }
+
+  /* Rows are not interactive (only their action buttons are): no focus state,
+     and the hover highlight is purely a scanning aid. */
+  .menu-item {
+    width: 100%;
+    min-width: 0;
+
+    transition: background-color 120ms ease-in-out;
+
+    &:hover {
+      background-color: var(--mat-sys-surface-container-high);
+    }
+
+    /* Keep the leading control and trailing actions vertically centered. */
+    [matListItemIcon],
+    [matListItemMeta] {
+      align-self: center;
+    }
+
+    /* Disabled items: mute the content (M3 disabled content opacity) but keep the
+       action buttons at full strength so they can re-enable the item. */
+    &.is-disabled {
+      [matListItemTitle],
+      [matListItemLine] {
+        opacity: 0.38;
+      }
+    }
+
+    .delete-action:not(:disabled) {
+      color: var(--mat-sys-error);
+    }
+
+    .user-price {
+      color: var(--mat-sys-tertiary);
+      font: var(--mat-sys-label-large);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}

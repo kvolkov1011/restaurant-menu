@@ -1,0 +1,114 @@
+<header class="page-header" [class.compact]="!showHeading()">
+  <div class="page-header-main">
+    @if (showHeading()) {
+      <h2>Menu items</h2>
+    }
+    <button mat-flat-button type="button" (click)="addMenuItem()">
+      Add menu position
+    </button>
+  </div>
+
+  <div class="filters">
+    <nav class="category-nav" aria-label="Filter menu items by category">
+      <button
+        mat-button
+        type="button"
+        class="category-button"
+        [class.selected]="selectedCategoryId() === null"
+        [attr.aria-pressed]="selectedCategoryId() === null"
+        (click)="selectCategory(null)">
+        See all
+      </button>
+      @for (category of categories(); track category.id) {
+        <button
+          mat-button
+          type="button"
+          class="category-button"
+          [class.selected]="selectedCategoryId() === category.id"
+          [attr.aria-pressed]="selectedCategoryId() === category.id"
+          (click)="selectCategory(category.id)">
+          {{ category.name }}
+        </button>
+      }
+    </nav>
+
+    <label class="search-field">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        type="search"
+        placeholder="Filter by name or description"
+        aria-label="Filter menu items by name or description"
+        [value]="searchTerm()"
+        (input)="setSearchTerm($event)" />
+      <button
+        mat-icon-button
+        class="clear-search"
+        type="button"
+        aria-label="Clear menu item filter"
+        (click)="clearSearch()">
+        <mat-icon aria-hidden="true">close</mat-icon>
+      </button>
+    </label>
+  </div>
+</header>
+
+<section>
+  @if (error()) {
+    <div class="status">Could not load menu items.</div>
+  } @else if (isLoading()) {
+    <div class="status">Loading menu items...</div>
+  } @else if (filteredMenuItems().length === 0) {
+    <div class="status">No matching menu items.</div>
+  } @else {
+    <mat-list aria-label="Menu items">
+        @for (menuItem of filteredMenuItems(); track menuItem.id) {
+        <mat-list-item
+          class="menu-item"
+          [class.is-disabled]="!menuItem.enabled">
+          <button
+            mat-icon-button
+            matListItemIcon
+            type="button"
+            [attr.aria-label]="(menuItem.enabled ? 'Disable ' : 'Enable ') + menuItem.name"
+            [matTooltip]="(menuItem.enabled ? 'Disable ' : 'Enable ') + menuItem.name"
+            (click)="toggleEnabled(menuItem)">
+            <mat-icon>{{ menuItem.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+          </button>
+          @if (menuItem.userPrice) {
+            <span matListItemTitle class="user-price-title">
+              {{ menuItem.name }} · <span class="user-price">Customer sets the price</span>
+            </span>
+          } @else {
+            <span matListItemTitle>
+            {{ menuItem.name }} · {{ menuItem.price | currency: 'USD' }}
+            </span>
+          }
+          @if (menuItem.description) {
+            <span matListItemLine>{{ menuItem.description }}</span>
+          }
+          <span matListItemLine>Category: {{ categoryName(menuItem.categoryId) }}</span>
+
+          <span matListItemMeta>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Edit {{ menuItem.name }}"
+              [matTooltip]="'Edit ' + menuItem.name"
+              (click)="editMenuItem(menuItem)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="delete-action"
+              type="button"
+              aria-label="Delete {{ menuItem.name }}"
+              [matTooltip]="'Delete ' + menuItem.name"
+              (click)="deleteMenuItem(menuItem)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+        </mat-list-item>
+        }
+    </mat-list>
+  }
+</section>

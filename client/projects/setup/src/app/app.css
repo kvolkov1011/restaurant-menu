@@ -1,0 +1,30 @@
+:host {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex: none;
+  }
+
+  .sitename {
+    margin-right: auto;
+  }
+
+  .header a.active {
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+
+  .main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-inline: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+}

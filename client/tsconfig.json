@@ -14,8 +14,6 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "@env": ["./src/environments/environment"],
-      "@shared/*": ["./src/app/features/shared/*"],
       "@common": ["../common/index.ts"]
     }
   },
@@ -27,10 +25,10 @@
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./projects/setup/tsconfig.app.json"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path": "./projects/menu/tsconfig.app.json"
     }
   ]
 }

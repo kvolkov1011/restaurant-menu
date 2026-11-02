@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: auto;
+
+  .page-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--mat-sys-surface);
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 16px 16px 8px;
+
+    h2 {
+      font: var(--mat-sys-title-medium);
+      margin: 0;
+    }
+
+    button {
+      flex: none;
+      white-space: nowrap;
+    }
+
+    &.compact {
+      justify-content: flex-end;
+    }
+  }
+
+  .status {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0;
+    padding: 16px;
+  }
+
+  /* Rows are not interactive (only their action buttons are): no focus state,
+     and the hover highlight is purely a scanning aid. */
+  .category-item {
+    transition: background-color 120ms ease-in-out;
+
+    &:hover {
+      background-color: var(--mat-sys-surface-container-high);
+    }
+
+    /* Material pins the meta column to the top of the stretched flex row. */
+    [matListItemMeta] {
+      align-self: center;
+    }
+
+    .delete-action:not(:disabled) {
+      color: var(--mat-sys-error);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}

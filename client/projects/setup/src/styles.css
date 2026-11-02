@@ -1,0 +1,66 @@
+/* Section tabs on the setup page. Material's tab internals live inside the
+   tab group's own template, so they cannot be styled from the page's scoped CSS. */
+.section-tabs {
+  /* The tab group is a grid item; defeat its content-based automatic minimum so
+     the grid row, not the list, decides its height. */
+  min-height: 0;
+
+  /* Sticky so long lists can be switched without scrolling back up. */
+  .mat-mdc-tab-header {
+    position: sticky;
+    top: 56px; /* height of the sticky app toolbar */
+    z-index: 10;
+    background-color: var(--mat-sys-surface);
+  }
+
+  /* Stretch Material's flex chain so the tab body wrapper takes the space the
+     header leaves over. min-height: 0 lets it be smaller than a long list, which
+     the tab body's own scroller then handles. */
+  .mat-mdc-tab-body-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .mat-mdc-tab-body-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* The panel fills the region, but grows with a long list (flex-basis: auto)
+     so the tab body's scroller still reveals overflow. */
+  app-categories,
+  app-menu-items {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+  }
+
+  app-menu-items .menu-items-viewport,
+  app-menu-items .menu-items-viewport .cdk-virtual-scroll-content-wrapper,
+  app-menu-items .menu-items-viewport mat-list,
+  app-menu-items .menu-items-viewport .menu-item {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+/* The menu viewport only scrolls vertically. CDK gives its content wrapper a
+   min-width based on the widest rendered row, which can otherwise create a
+   nested horizontal scrollbar on narrow screens. */
+.menu-viewport,
+.menu-viewport .cdk-virtual-scroll-content-wrapper,
+.menu-viewport mat-list,
+.menu-viewport .menu-item,
+.menu-viewport .category-heading {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.menu-viewport {
+  overflow-x: hidden !important;
+}
