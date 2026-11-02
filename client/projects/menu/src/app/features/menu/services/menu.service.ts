@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { fromEvent, Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { CategorySummary, MenuItem } from '@common';
+import { CategorySummary, CreateOrderRequest, MenuItem, Order } from '@common';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +19,9 @@ export class MenuService {
 
   getMenuItems(): Observable<MenuItem[]> {
     return this.#http.get<MenuItem[]>('/api/menu-items');
+  }
+
+  placeOrder(request: CreateOrderRequest): Observable<Order> {
+    return this.#http.post<Order>('/api/orders', request);
   }
 }

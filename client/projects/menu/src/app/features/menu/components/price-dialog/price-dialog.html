@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ data.item.name }}</h2>
+<mat-dialog-content class="price-dialog">
+  <span class="eyebrow">Choose your amount</span>
+  <p>Enter the amount you’d like to pay before adding it to your order.</p>
+  <label class="dialog-price-label" for="dialog-price">Your price</label>
+  <div class="dialog-price-input">
+    <span>$</span>
+    <input id="dialog-price" type="number" [min]="data.item.price" step="0.01" [placeholder]="data.item.price.toFixed(2)" [value]="priceDraft()" (input)="setPriceDraft($any($event.target).value)" (keyup.enter)="confirm()" />
+  </div>
+  @if (priceDraft() && +priceDraft() < data.item.price) {
+    <p class="price-error" role="alert">Enter at least {{ data.item.price | currency: 'USD' }}.</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" [disabled]="!priceDraft() || +priceDraft() < data.item.price" (click)="confirm()">Add to cart</button>
+</mat-dialog-actions>

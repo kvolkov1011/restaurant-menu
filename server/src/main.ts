@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import categoriesRouter from './routing/categories';
 import menuItemsRouter from './routing/menu-items';
+import ordersRouter from './routing/orders';
 
 const PORT = 3000;
 const app = express();
@@ -13,6 +14,7 @@ app.locals.io = io;
 app.use(express.json());
 app.use('/', categoriesRouter);
 app.use('/', menuItemsRouter);
+app.use('/', ordersRouter);
 
 server.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);

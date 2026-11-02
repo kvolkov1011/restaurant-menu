@@ -1,0 +1,78 @@
+<section class="cart-dock" [class.is-open]="cartOpen()" aria-label="Shopping cart">
+  <button
+    type="button"
+    class="cart-summary"
+    [class.is-empty]="cartItems().length === 0"
+    [attr.aria-expanded]="cartOpen()"
+    [disabled]="cartItems().length === 0"
+    (click)="toggleCart()">
+    <span class="cart-summary-icon"><mat-icon aria-hidden="true">shopping_bag</mat-icon></span>
+    <span class="cart-summary-copy">
+      <strong>{{ cartItems().length === 0 ? 'Your cart is empty' : cartCount() > 0 ? cartCount() + ' ' + (cartCount() === 1 ? 'item' : 'items') : cartItems().length + ' unavailable' }}</strong>
+      <span>{{ cartItems().length === 0 ? 'Add something from the menu' : cartCount() > 0 ? 'Tap to review your order' : 'Remove unavailable items to continue' }}</span>
+    </span>
+    @if (cartItems().length > 0) {
+      <span class="cart-summary-total">{{ cartTotal() | currency: 'USD' }}</span>
+      <mat-icon class="cart-chevron" aria-hidden="true">{{ cartOpen() ? 'expand_more' : 'expand_less' }}</mat-icon>
+    }
+  </button>
+
+  @if (checkoutError()) {
+    <p class="checkout-message" [class.is-success]="checkoutError() === 'Order received! Thank you.'" role="alert">{{ checkoutError() }}</p>
+  }
+
+  @if (cartOpen()) {
+    <div class="cart-panel">
+      <div class="cart-panel-header">
+        <div>
+          <span class="eyebrow">Ready when you are</span>
+          <h2>Your order</h2>
+        </div>
+        <button mat-icon-button type="button" aria-label="Close cart" (click)="toggleCart()">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      </div>
+      <div class="cart-items">
+        @for (cartItem of cartItems(); track cartItem.item.id) {
+          <article class="cart-item" [class.is-unavailable]="!cartItem.item.enabled">
+            <div class="cart-item-info">
+              <strong>{{ cartItem.item.name }}</strong>
+              @if (cartItem.item.description) {
+                <span class="cart-item-description">{{ cartItem.item.description }}</span>
+              }
+              @if (!cartItem.item.enabled) {
+                <span class="cart-item-unavailable">Unavailable</span>
+              }
+              @if (cartItem.item.userPrice) {
+                <label>
+                  Price
+                  <span class="price-input-wrap">
+                    <span>$</span>
+                    <input type="number" [min]="cartItem.item.price" step="0.01" [value]="cartItem.price" [disabled]="!cartItem.item.enabled" [attr.aria-label]="'Price for ' + cartItem.item.name" (change)="updateCartPrice(cartItem.item.id, $any($event.target).value)" />
+                  </span>
+                </label>
+              } @else {
+                <span>{{ cartItem.price | currency: 'USD' }} each</span>
+              }
+            </div>
+            <div class="quantity-control" aria-label="Quantity">
+              <button type="button" [disabled]="!cartItem.item.enabled" [attr.aria-label]="'Remove one ' + cartItem.item.name" (click)="changeQuantity(cartItem.item.id, -1)">−</button>
+              <span>{{ cartItem.quantity }}</span>
+              <button type="button" [disabled]="!cartItem.item.enabled" [attr.aria-label]="'Add one ' + cartItem.item.name" (click)="changeQuantity(cartItem.item.id, 1)">+</button>
+            </div>
+            <strong class="cart-item-total">{{ cartItem.price * cartItem.quantity | currency: 'USD' }}</strong>
+            <button mat-icon-button type="button" class="cart-delete" [attr.aria-label]="'Remove ' + cartItem.item.name + ' from cart'" (click)="removeFromCart(cartItem.item.id)">
+              <mat-icon aria-hidden="true">delete_outline</mat-icon>
+            </button>
+          </article>
+        }
+      </div>
+      <div class="order-summary">
+        <div><span>Subtotal</span><strong>{{ cartSubtotal() | currency: 'USD' }}</strong></div>
+        <div class="discount"><span>House discount · {{ houseDiscountPercent() }}%</span><strong>−{{ cartDiscount() | currency: 'USD' }}</strong></div>
+        <div class="total"><span>Total</span><strong>{{ cartTotal() | currency: 'USD' }}</strong></div>
+      </div>
+      <button mat-flat-button color="primary" class="checkout-button" type="button" [disabled]="availableCartItems().length === 0 || checkoutInProgress()" (click)="checkout()">{{ checkoutInProgress() ? 'Checking availability...' : 'Checkout' }}</button>
+    </div>
+  }
+</section>

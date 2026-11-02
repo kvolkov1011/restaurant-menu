@@ -1,5 +1,4 @@
-import { Category } from '@common';
-import { MenuItem } from '@common';
+import { Category, MenuItem, Order } from '@common';
 
 export const categories: Category[] = [
   { id: '1', name: 'Beverages' },
@@ -261,3 +260,5 @@ export const menuItems: MenuItem[] = [
     enabled: true,
   },
 ];
+
+export const orders: Order[] = [];
