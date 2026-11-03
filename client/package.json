@@ -9,6 +9,8 @@
     "build": "npm run build:menu && npm run build:management",
     "build:menu": "ng build menu",
     "build:management": "ng build management",
+    "format:check": "prettier --check \"projects/**/*.{ts,html,css,scss}\" \"*.{json,ts}\" \"../server/src/**/*.ts\" \"../common/**/*.ts\"",
+    "lint": "npm run format:check && tsc --noEmit -p tsconfig.json",
     "watch": "npm run watch:menu",
     "watch:menu": "ng build menu --watch --configuration development",
     "watch:management": "ng build management --watch --configuration development",

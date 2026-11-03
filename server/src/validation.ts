@@ -1,8 +1,7 @@
 import { Category, MenuItem } from '@common';
 
 export type ValidationResult<T> =
-  | { value: T; error?: never }
-  | { value?: never; error: string };
+  { value: T; error?: never } | { value?: never; error: string };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === 'object' && !Array.isArray(value);
@@ -15,7 +14,9 @@ const requiredText = (value: unknown, field: string): string | null => {
   return null;
 };
 
-export const validateCategory = (value: unknown): ValidationResult<Category> => {
+export const validateCategory = (
+  value: unknown,
+): ValidationResult<Category> => {
   if (!isRecord(value)) return { error: 'A category object is required.' };
 
   const idError = requiredText(value['id'], 'Category ID');
@@ -24,7 +25,9 @@ export const validateCategory = (value: unknown): ValidationResult<Category> => 
   const nameError = requiredText(value['name'], 'Category name');
   if (nameError) return { error: nameError };
 
-  return { value: { id: value['id'] as string, name: value['name'] as string } };
+  return {
+    value: { id: value['id'] as string, name: value['name'] as string },
+  };
 };
 
 export const validateMenuItem = (
@@ -46,15 +49,25 @@ export const validateMenuItem = (
   const nameError = requiredText(value['name'], 'Menu item name');
   if (nameError) return { error: nameError };
 
-  if (value['description'] !== undefined && typeof value['description'] !== 'string') {
+  if (
+    value['description'] !== undefined &&
+    typeof value['description'] !== 'string'
+  ) {
     return { error: 'Menu item description must be text.' };
   }
 
-  if (typeof value['price'] !== 'number' || !Number.isFinite(value['price']) || value['price'] <= 0) {
+  if (
+    typeof value['price'] !== 'number' ||
+    !Number.isFinite(value['price']) ||
+    value['price'] <= 0
+  ) {
     return { error: 'Menu item price must be a positive number.' };
   }
 
-  if (value['userPrice'] !== undefined && typeof value['userPrice'] !== 'boolean') {
+  if (
+    value['userPrice'] !== undefined &&
+    typeof value['userPrice'] !== 'boolean'
+  ) {
     return { error: 'Customer-set pricing must be a boolean.' };
   }
 

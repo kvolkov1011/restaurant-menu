@@ -22,16 +22,11 @@ export class SetupService {
   }
 
   updateCategory(category: Category): Observable<Category> {
-    return this.#http.put<Category>(
-      `/api/category/${encodeURIComponent(category.id)}`,
-      category,
-    );
+    return this.#http.put<Category>(`/api/category/${encodeURIComponent(category.id)}`, category);
   }
 
   deleteCategory(id: string): Observable<void> {
-    return this.#http.delete<void>(
-      `/api/category/${encodeURIComponent(id)}`,
-    );
+    return this.#http.delete<void>(`/api/category/${encodeURIComponent(id)}`);
   }
 
   getMenuItems(): Observable<MenuItem[]> {
@@ -47,15 +42,10 @@ export class SetupService {
   }
 
   updateMenuItem(menuItem: MenuItem): Observable<MenuItem> {
-    return this.#http.put<MenuItem>(
-      `/api/menu-item/${encodeURIComponent(menuItem.id)}`,
-      menuItem,
-    );
+    return this.#http.put<MenuItem>(`/api/menu-item/${encodeURIComponent(menuItem.id)}`, menuItem);
   }
 
   deleteMenuItem(id: string): Observable<void> {
-    return this.#http.delete<void>(
-      `/api/menu-item/${encodeURIComponent(id)}`,
-    );
+    return this.#http.delete<void>(`/api/menu-item/${encodeURIComponent(id)}`);
   }
 }

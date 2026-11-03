@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -10,11 +10,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '@common';
 
 export type CategoryDialogData = {
@@ -22,6 +18,7 @@ export type CategoryDialogData = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-category-dialog',
   templateUrl: './category-dialog.html',
   styleUrl: './category-dialog.css',
@@ -61,6 +58,7 @@ export class CategoryDialogComponent {
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+
       return;
     }
 

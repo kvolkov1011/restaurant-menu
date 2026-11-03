@@ -3,11 +3,11 @@ export const HOUSE_DISCOUNT_RATE = 0.1;
 export type Category = {
   id: string;
   name: string;
-}
+};
 
 export type CategorySummary = Category & {
   itemCount: number;
-}
+};
 
 export type MenuItem = {
   id: string;
@@ -17,7 +17,7 @@ export type MenuItem = {
   price: number;
   userPrice?: boolean;
   enabled: boolean;
-}
+};
 
 export type OrderLineRequest = {
   itemId: MenuItem['id'];

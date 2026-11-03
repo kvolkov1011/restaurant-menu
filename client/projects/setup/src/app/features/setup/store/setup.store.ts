@@ -1,12 +1,6 @@
 import { DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  patchState,
-  signalStore,
-  withHooks,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
+import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, catchError, pipe, switchMap, tap } from 'rxjs';
 import { Category, MenuItem, Order } from '@common';
@@ -77,8 +71,7 @@ export const SetupStore = signalStore(
 
     const handleOrdersError = (error: unknown): Observable<never> => {
       patchState(store, {
-        ordersError:
-          error instanceof Error ? error.message : 'Could not load orders.',
+        ordersError: error instanceof Error ? error.message : 'Could not load orders.',
         ordersLoading: false,
       });
       return EMPTY;
@@ -141,9 +134,7 @@ export const SetupStore = signalStore(
       ),
       loadOrders: rxMethod<void>(
         pipe(
-          tap(() =>
-            patchState(store, { ordersLoading: true, ordersError: null }),
-          ),
+          tap(() => patchState(store, { ordersLoading: true, ordersError: null })),
           switchMap(() => refreshOrders()),
         ),
       ),
@@ -188,9 +179,7 @@ export const SetupStore = signalStore(
       const setupService = inject(SetupService);
       const destroyRef = inject(DestroyRef);
 
-      setupService.orderChanges$
-        .pipe(takeUntilDestroyed(destroyRef))
-        .subscribe(() => loadOrders());
+      setupService.orderChanges$.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => loadOrders());
     },
   }),
 );

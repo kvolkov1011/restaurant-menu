@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -9,12 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
-import {
-  MatError,
-  MatFormField,
-  MatLabel,
-  MatPrefix,
-} from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -26,6 +21,7 @@ export type MenuItemDialogData = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-menu-item-dialog',
   templateUrl: './menu-item-dialog.html',
   styleUrl: './menu-item-dialog.css',
@@ -49,10 +45,9 @@ export type MenuItemDialogData = {
 export class MenuItemDialogComponent {
   readonly #formBuilder = inject(FormBuilder);
   readonly #dialogRef = inject(MatDialogRef<MenuItemDialogComponent>);
-  readonly data =
-    inject<MenuItemDialogData | undefined>(MAT_DIALOG_DATA, {
-      optional: true,
-    }) ?? { categories: [] };
+  readonly data = inject<MenuItemDialogData | undefined>(MAT_DIALOG_DATA, {
+    optional: true,
+  }) ?? { categories: [] };
 
   readonly isEditing = !!this.data.menuItem;
   readonly form = this.#formBuilder.group({
@@ -66,10 +61,7 @@ export class MenuItemDialogComponent {
     categoryId: [this.data.menuItem?.categoryId ?? '', Validators.required],
     name: [this.data.menuItem?.name ?? '', Validators.required],
     description: [this.data.menuItem?.description ?? ''],
-    price: [
-      this.data.menuItem?.price ?? 0,
-      [Validators.required, Validators.min(0.01)],
-    ],
+    price: [this.data.menuItem?.price ?? 0, [Validators.required, Validators.min(0.01)]],
     userPrice: [this.data.menuItem?.userPrice ?? false],
     enabled: [this.data.menuItem?.enabled ?? true],
   });
@@ -77,6 +69,7 @@ export class MenuItemDialogComponent {
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+
       return;
     }
 

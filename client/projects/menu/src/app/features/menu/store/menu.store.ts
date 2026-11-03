@@ -11,11 +11,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, catchError, pipe, switchMap, tap } from 'rxjs';
 import { CategorySummary, HOUSE_DISCOUNT_RATE, MenuItem } from '@common';
 import { MenuService } from '../services/menu.service';
-import {
-  calculateCartSummary,
-  CartLineSnapshot,
-  resolveCartItems,
-} from './cart-calculations';
+import { calculateCartSummary, CartLineSnapshot, resolveCartItems } from './cart-calculations';
 
 type MenuState = {
   categories: CategorySummary[];
@@ -35,8 +31,7 @@ export type CartItem = {
 };
 
 export type MenuRow =
-  | { kind: 'category'; category: CategorySummary }
-  | { kind: 'item'; item: MenuItem };
+  { kind: 'category'; category: CategorySummary } | { kind: 'item'; item: MenuItem };
 
 const initialState: MenuState = {
   categories: [],
@@ -68,7 +63,9 @@ export const MenuStore = signalStore(
     );
     const cartItems = computed<CartItem[]>(() => resolveCartItems(cart(), menuItems()));
     const cartSummary = computed(() => calculateCartSummary(cartItems()));
-    const availableCartItems = computed(() => cartItems().filter((cartItem) => cartItem.item.enabled));
+    const availableCartItems = computed(() =>
+      cartItems().filter((cartItem) => cartItem.item.enabled),
+    );
     const cartCount = computed(() => cartSummary().count);
     const cartSubtotal = computed(() => cartSummary().subtotal);
     const cartDiscount = computed(() => cartSummary().discount);
@@ -161,7 +158,10 @@ export const MenuStore = signalStore(
                   }
                 : cartItem,
             )
-          : [...cart, { itemId: item.id, item, price, quantity: 1, userPrice: item.userPrice === true }];
+          : [
+              ...cart,
+              { itemId: item.id, item, price, quantity: 1, userPrice: item.userPrice === true },
+            ];
 
         return { cart: nextCart };
       });

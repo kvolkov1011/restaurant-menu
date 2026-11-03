@@ -4,7 +4,7 @@ import {
   CdkVirtualScrollViewport,
   VIRTUAL_SCROLL_STRATEGY,
 } from '@angular/cdk/scrolling';
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -23,6 +23,7 @@ import { MenuRow, MenuStore } from '../store/menu.store';
 
 const variableSizeVirtualScrollStrategy = new VariableSizeVirtualScrollStrategy();
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-menu-page',
   templateUrl: './menu.html',
   styleUrl: './menu.css',
@@ -60,13 +61,15 @@ export class MenuPage {
 
   readonly visibleMenuRows = computed<MenuRow[]>(() => {
     const selectedCategoryId = this.selectedCategoryId();
-    return this.#menuStore.menuRows().filter(
-      (row) =>
-        !selectedCategoryId ||
-        (row.kind === 'item'
-          ? row.item.categoryId === selectedCategoryId
-          : row.category.id === selectedCategoryId),
-    );
+    return this.#menuStore
+      .menuRows()
+      .filter(
+        (row) =>
+          !selectedCategoryId ||
+          (row.kind === 'item'
+            ? row.item.categoryId === selectedCategoryId
+            : row.category.id === selectedCategoryId),
+      );
   });
 
   selectCategory(categoryId: string | null): void {

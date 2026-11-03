@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import {
   MatList,
@@ -16,6 +16,7 @@ import { MenuItemDialogComponent, MenuItemDialogData } from '../menu-item-dialog
 import { SetupStore } from '../../store/setup.store';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-menu-items',
   templateUrl: './menu-items.html',
   styleUrl: './menu-items.css',
@@ -50,8 +51,7 @@ export class MenuItemsComponent {
       const matchesSearch =
         !searchTerm ||
         menuItem.name.toLocaleLowerCase().includes(searchTerm) ||
-        (!!menuItem.description &&
-          menuItem.description.toLocaleLowerCase().includes(searchTerm));
+        (!!menuItem.description && menuItem.description.toLocaleLowerCase().includes(searchTerm));
 
       return matchesCategory && matchesSearch;
     });
@@ -65,7 +65,11 @@ export class MenuItemsComponent {
   }
 
   setSearchTerm(event: Event): void {
-    this.searchTerm.set((event.target as HTMLInputElement).value);
+    const target = event.target;
+
+    if (!(target instanceof HTMLInputElement)) return;
+
+    this.searchTerm.set(target.value);
   }
 
   clearSearch(): void {
@@ -73,11 +77,11 @@ export class MenuItemsComponent {
   }
 
   addMenuItem(): void {
-    this.openMenuItemDialog();
+    this.#openMenuItemDialog();
   }
 
   editMenuItem(menuItem: MenuItem): void {
-    this.openMenuItemDialog({ menuItem });
+    this.#openMenuItemDialog({ menuItem });
   }
 
   deleteMenuItem(menuItem: MenuItem): void {
@@ -92,19 +96,18 @@ export class MenuItemsComponent {
     return this.categories().find((category) => category.id === categoryId)?.name ?? categoryId;
   }
 
-  private openMenuItemDialog(data?: Pick<MenuItemDialogData, 'menuItem'>): void {
-    const dialogRef = this.#dialog.open<
+  #openMenuItemDialog(data?: Pick<MenuItemDialogData, 'menuItem'>): void {
+    const dialogRef = this.#dialog.open<MenuItemDialogComponent, MenuItemDialogData, MenuItem>(
       MenuItemDialogComponent,
-      MenuItemDialogData,
-      MenuItem
-    >(MenuItemDialogComponent, {
-      width: 'min(560px, calc(100vw - 32px))',
-      maxWidth: 'calc(100vw - 32px)',
-      data: {
-        ...data,
-        categories: this.categories(),
+      {
+        width: 'min(560px, calc(100vw - 32px))',
+        maxWidth: 'calc(100vw - 32px)',
+        data: {
+          ...data,
+          categories: this.categories(),
+        },
       },
-    });
+    );
 
     dialogRef.afterClosed().subscribe((menuItem) => {
       if (!menuItem) {

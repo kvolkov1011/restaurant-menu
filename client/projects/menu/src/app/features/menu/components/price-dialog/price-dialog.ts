@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -11,6 +11,7 @@ import {
 import { MenuItem } from '@common';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-price-dialog',
   templateUrl: './price-dialog.html',
   styleUrl: './price-dialog.css',
@@ -25,9 +26,19 @@ export class PriceDialogComponent {
     this.priceDraft.set(value);
   }
 
+  setPriceDraftFromEvent(event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLInputElement)) return;
+
+    this.setPriceDraft(target.value);
+  }
+
   confirm(): void {
     const price = Number(this.priceDraft());
+
     if (!Number.isFinite(price) || price < this.data.item.price) return;
+
     this.#dialogRef.close(price);
   }
 

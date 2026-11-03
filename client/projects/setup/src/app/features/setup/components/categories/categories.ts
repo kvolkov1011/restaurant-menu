@@ -1,25 +1,15 @@
-import { Component, inject, input } from '@angular/core';
-import {
-  MatList,
-  MatListItem,
-  MatListItemMeta,
-  MatListItemTitle,
-} from '@angular/material/list';
-import {
-  MatButton,
-  MatIconButton,
-} from '@angular/material/button';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { MatList, MatListItem, MatListItemMeta, MatListItemTitle } from '@angular/material/list';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { Category } from '@common';
 import { SetupStore } from '../../store/setup.store';
-import {
-  CategoryDialogComponent,
-  CategoryDialogData,
-} from '../category-dialog/category-dialog';
+import { CategoryDialogComponent, CategoryDialogData } from '../category-dialog/category-dialog';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-categories',
   templateUrl: './categories.html',
   styleUrl: './categories.css',
@@ -46,18 +36,18 @@ export class CategoriesComponent {
   readonly showHeading = input(true);
 
   addCategory(): void {
-    this.openCategoryDialog();
+    this.#openCategoryDialog();
   }
 
   editCategory(category: Category): void {
-    this.openCategoryDialog({ category });
+    this.#openCategoryDialog({ category });
   }
 
   deleteCategory(category: Category): void {
     this.#setupStore.deleteCategory(category.id);
   }
 
-  private openCategoryDialog(data?: CategoryDialogData): void {
+  #openCategoryDialog(data?: CategoryDialogData): void {
     const dialogRef = this.#dialog.open<CategoryDialogComponent, CategoryDialogData, Category>(
       CategoryDialogComponent,
       { data },

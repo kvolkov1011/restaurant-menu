@@ -13,11 +13,16 @@ router.get('/menu-items', (req, res) => {
 });
 
 router.post('/menu-item', (req, res) => {
-  const result = validateMenuItem(req.body, new Set(categories.map((category) => category.id)));
+  const result = validateMenuItem(
+    req.body,
+    new Set(categories.map((category) => category.id)),
+  );
   if ('error' in result) return res.status(400).json(result);
 
   if (menuItems.some((item) => item.id === result.value.id)) {
-    return res.status(409).json({ error: 'A menu item with this ID already exists.' });
+    return res
+      .status(409)
+      .json({ error: 'A menu item with this ID already exists.' });
   }
 
   menuItems.push(result.value);

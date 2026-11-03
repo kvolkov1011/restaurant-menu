@@ -39,7 +39,9 @@
             <header class="order-card-header">
               <div>
                 <span class="order-id">{{ order.id }}</span>
-                <time [attr.datetime]="order.createdAt">{{ order.createdAt | date: 'medium' }}</time>
+                <time [attr.datetime]="order.createdAt">{{
+                  order.createdAt | date: 'medium'
+                }}</time>
               </div>
               <strong>{{ order.total | currency: 'USD' }}</strong>
             </header>

@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { MenuStore } from '../../store/menu.store';
 const CHECKOUT_MESSAGE_TIMEOUT_MS = 3500;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-cart',
   templateUrl: './cart.html',
   styleUrl: './cart.css',
@@ -33,16 +34,26 @@ export class CartComponent {
 
   changeQuantity(itemId: string, delta: number): void {
     this.#menuStore.changeQuantity(itemId, delta);
+
     if (this.cartItems().length === 0) this.cartOpen.set(false);
   }
 
   removeFromCart(itemId: string): void {
     this.#menuStore.removeFromCart(itemId);
+
     if (this.cartItems().length === 0) this.cartOpen.set(false);
   }
 
   updateCartPrice(itemId: string, value: string): void {
     this.#menuStore.updateCartPrice(itemId, value);
+  }
+
+  updateCartPriceFromEvent(itemId: string, event: Event): void {
+    const target = event.target;
+
+    if (!(target instanceof HTMLInputElement)) return;
+
+    this.updateCartPrice(itemId, target.value);
   }
 
   toggleCart(): void {
@@ -54,11 +65,13 @@ export class CartComponent {
 
     this.checkoutInProgress.set(true);
     this.checkoutError.set(null);
+
     const cartItems = this.availableCartItems();
 
     this.#menuService.getMenuItems().subscribe({
       next: (menuItems) => {
         this.#menuStore.replaceMenuItems(menuItems);
+
         const changedItem = cartItems.find((cartItem) => {
           const currentItem = menuItems.find((item) => item.id === cartItem.item.id);
           return (
@@ -71,7 +84,7 @@ export class CartComponent {
         });
 
         if (changedItem) {
-          this.showCheckoutMessage(
+          this.#showCheckoutMessage(
             'Availability or pricing changed for an item in your order. Review the cart before confirming.',
           );
           this.checkoutInProgress.set(false);
@@ -91,26 +104,30 @@ export class CartComponent {
             next: () => {
               this.#menuStore.clearCart();
               this.cartOpen.set(false);
-              this.showCheckoutMessage('Order received! Thank you.');
+              this.#showCheckoutMessage('Order received! Thank you.');
               this.checkoutInProgress.set(false);
             },
-            error: (error: unknown) => this.handleCheckoutError(error),
+            error: (error: unknown) => this.#handleCheckoutError(error),
           });
       },
-      error: (error: unknown) => this.handleCheckoutError(error),
+      error: (error: unknown) => this.#handleCheckoutError(error),
     });
   }
 
-  private handleCheckoutError(error: unknown): void {
+  #handleCheckoutError(error: unknown): void {
     const response = error instanceof HttpErrorResponse ? error.error : null;
-    this.showCheckoutMessage(response?.error ?? 'We could not place your order. Please try again.');
+
+    this.#showCheckoutMessage(
+      response?.error ?? 'We could not place your order. Please try again.',
+    );
     this.checkoutInProgress.set(false);
   }
 
-  private showCheckoutMessage(message: string): void {
+  #showCheckoutMessage(message: string): void {
     if (this.#checkoutMessageTimer) clearTimeout(this.#checkoutMessageTimer);
 
     this.checkoutError.set(message);
+
     this.#checkoutMessageTimer = setTimeout(() => {
       this.checkoutError.set(null);
       this.#checkoutMessageTimer = undefined;

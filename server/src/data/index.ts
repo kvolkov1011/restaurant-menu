@@ -67,7 +67,8 @@ export const menuItems: MenuItem[] = [
     id: 'chicken-pasta',
     categoryId: '3',
     name: 'Chicken Pasta',
-    description: 'Penne with grilled chicken, spinach, and parmesan cream sauce',
+    description:
+      'Penne with grilled chicken, spinach, and parmesan cream sauce',
     price: 14.5,
     enabled: true,
   },

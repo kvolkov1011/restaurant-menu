@@ -8,17 +8,14 @@ export const routes: Routes = [
   },
   {
     path: 'categories',
-    loadComponent: () =>
-      import('./features/setup/pages/categories').then((m) => m.CategoriesPage),
+    loadComponent: () => import('./features/setup/pages/categories').then((m) => m.CategoriesPage),
   },
   {
     path: 'menu-items',
-    loadComponent: () =>
-      import('./features/setup/pages/menu-items').then((m) => m.MenuItemsPage),
+    loadComponent: () => import('./features/setup/pages/menu-items').then((m) => m.MenuItemsPage),
   },
   {
     path: 'orders',
-    loadComponent: () =>
-      import('./features/setup/pages/orders').then((m) => m.OrdersPage),
+    loadComponent: () => import('./features/setup/pages/orders').then((m) => m.OrdersPage),
   },
 ];

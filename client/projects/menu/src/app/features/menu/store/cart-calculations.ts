@@ -45,15 +45,10 @@ export const resolveCartItems = (
   });
 };
 
-export const calculateCartSummary = (
-  items: readonly ResolvedCartItem[],
-): CartSummary => {
+export const calculateCartSummary = (items: readonly ResolvedCartItem[]): CartSummary => {
   const availableItems = items.filter((cartItem) => cartItem.item.enabled);
   const count = availableItems.reduce((total, item) => total + item.quantity, 0);
-  const subtotal = availableItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
+  const subtotal = availableItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const discount = subtotal * HOUSE_DISCOUNT_RATE;
 
   return { count, subtotal, discount, total: subtotal - discount };

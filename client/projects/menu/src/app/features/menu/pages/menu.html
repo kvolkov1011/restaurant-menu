@@ -9,11 +9,33 @@
   </header>
 
   <nav class="category-nav" aria-label="Filter menu by category">
-    <button mat-button type="button" class="category-button" [class.selected]="selectedCategoryId() === null" [attr.aria-pressed]="selectedCategoryId() === null" (click)="selectCategory(null)">
+    <button
+      mat-button
+      type="button"
+      class="category-button"
+      [class.selected]="selectedCategoryId() === null"
+      [attr.aria-pressed]="selectedCategoryId() === null"
+      (click)="selectCategory(null)"
+    >
       See all
     </button>
     @for (category of visibleCategories(); track category.id) {
-      <button mat-button type="button" class="category-button" [class.selected]="selectedCategoryId() === category.id" [attr.aria-pressed]="selectedCategoryId() === category.id" [attr.aria-label]="'Filter by ' + category.name + ', ' + category.itemCount + ' ' + (category.itemCount === 1 ? 'item' : 'items')" (click)="selectCategory(category.id)">
+      <button
+        mat-button
+        type="button"
+        class="category-button"
+        [class.selected]="selectedCategoryId() === category.id"
+        [attr.aria-pressed]="selectedCategoryId() === category.id"
+        [attr.aria-label]="
+          'Filter by ' +
+          category.name +
+          ', ' +
+          category.itemCount +
+          ' ' +
+          (category.itemCount === 1 ? 'item' : 'items')
+        "
+        (click)="selectCategory(category.id)"
+      >
         {{ category.name }}
         <span class="category-count" aria-hidden="true">{{ category.itemCount }}</span>
       </button>
@@ -30,9 +52,14 @@
     } @else {
       <cdk-virtual-scroll-viewport class="menu-viewport" aria-label="Menu positions">
         <mat-list>
-          <ng-container *cdkVirtualFor="let row of visibleMenuRows(); let rowIndex = index; trackBy: trackRow">
+          <ng-container
+            *cdkVirtualFor="let row of visibleMenuRows(); let rowIndex = index; trackBy: trackRow"
+          >
             @if (row.kind === 'category') {
-              <mat-list-item class="menu-row category-heading" [attr.data-menu-row-index]="rowIndex">
+              <mat-list-item
+                class="menu-row category-heading"
+                [attr.data-menu-row-index]="rowIndex"
+              >
                 <span matListItemTitle>{{ row.category.name }}</span>
                 <span matListItemMeta class="category-count-label">
                   {{ row.category.itemCount }}
@@ -40,7 +67,12 @@
                 </span>
               </mat-list-item>
             } @else {
-              <mat-list-item class="menu-row menu-item" [attr.data-menu-row-index]="rowIndex" [class.is-disabled]="!row.item.enabled" [attr.aria-disabled]="!row.item.enabled">
+              <mat-list-item
+                class="menu-row menu-item"
+                [attr.data-menu-row-index]="rowIndex"
+                [class.is-disabled]="!row.item.enabled"
+                [attr.aria-disabled]="!row.item.enabled"
+              >
                 <span matListItemTitle>
                   {{ row.item.name }}
                   @if (!row.item.enabled) {
@@ -56,7 +88,14 @@
                   <span matListItemLine class="price">{{ row.item.price | currency: 'USD' }}</span>
                 }
                 <span matListItemMeta class="menu-item-action">
-                  <button mat-flat-button type="button" class="add-button" [disabled]="!row.item.enabled" [attr.aria-label]="'Add ' + row.item.name + ' to cart'" (click)="addToCart(row.item)">
+                  <button
+                    mat-flat-button
+                    type="button"
+                    class="add-button"
+                    [disabled]="!row.item.enabled"
+                    [attr.aria-label]="'Add ' + row.item.name + ' to cart'"
+                    (click)="addToCart(row.item)"
+                  >
                     <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
                   </button>
                 </span>

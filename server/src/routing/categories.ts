@@ -13,7 +13,10 @@ router.get('/categories', (req, res) => {
   const itemCounts = new Map<string, number>();
 
   for (const menuItem of menuItems) {
-    itemCounts.set(menuItem.categoryId, (itemCounts.get(menuItem.categoryId) ?? 0) + 1);
+    itemCounts.set(
+      menuItem.categoryId,
+      (itemCounts.get(menuItem.categoryId) ?? 0) + 1,
+    );
   }
 
   const categorySummaries: CategorySummary[] = categories.map((category) => ({
@@ -29,7 +32,9 @@ router.post('/category', (req, res) => {
   if ('error' in result) return res.status(400).json(result);
 
   if (categories.some((category) => category.id === result.value.id)) {
-    return res.status(409).json({ error: 'A category with this ID already exists.' });
+    return res
+      .status(409)
+      .json({ error: 'A category with this ID already exists.' });
   }
 
   categories.push(result.value);
@@ -65,7 +70,9 @@ router.delete('/category/:id', (req, res) => {
   }
 
   if (menuItems.some((item) => item.categoryId === id)) {
-    return res.status(409).json({ error: 'Cannot delete a category that has menu items.' });
+    return res
+      .status(409)
+      .json({ error: 'Cannot delete a category that has menu items.' });
   }
 
   categories.splice(categoryIndex, 1);

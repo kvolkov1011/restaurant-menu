@@ -8,10 +8,18 @@
     top: 0;
     z-index: 100;
     flex: none;
+
+    mat-toolbar {
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow-x: auto;
+    }
   }
 
   .sitename {
+    flex: none;
     margin-right: auto;
+    white-space: nowrap;
   }
 
   .header a.active {

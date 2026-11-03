@@ -2,9 +2,7 @@
   @if (showHeading()) {
     <h2>Categories</h2>
   }
-  <button mat-flat-button type="button" (click)="addCategory()">
-    Add category
-  </button>
+  <button mat-flat-button type="button" (click)="addCategory()">Add category</button>
 </header>
 
 <section>
@@ -24,7 +22,8 @@
               type="button"
               aria-label="Edit {{ category.name }}"
               [matTooltip]="'Edit ' + category.name"
-              (click)="editCategory(category)">
+              (click)="editCategory(category)"
+            >
               <mat-icon>edit</mat-icon>
             </button>
             <button
@@ -33,7 +32,8 @@
               type="button"
               aria-label="Delete {{ category.name }}"
               [matTooltip]="'Delete ' + category.name"
-              (click)="deleteCategory(category)">
+              (click)="deleteCategory(category)"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </span>
