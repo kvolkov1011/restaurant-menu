@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "setup": {
+    "management": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:class": {
@@ -82,10 +82,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "setup:build:production"
+              "buildTarget": "management:build:production"
             },
             "development": {
-              "buildTarget": "setup:build:development"
+              "buildTarget": "management:build:development"
             }
           },
           "defaultConfiguration": "development"

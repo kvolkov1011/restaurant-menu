@@ -1,4 +1,5 @@
-import { inject } from '@angular/core';
+import { DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   patchState,
   signalStore,
@@ -8,23 +9,29 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, catchError, pipe, switchMap, tap } from 'rxjs';
-import { Category, MenuItem } from '@common';
+import { Category, MenuItem, Order } from '@common';
 import { SetupService } from '../services/setup.service';
 
 type SetupState = {
   categories: Category[];
   menuItems: MenuItem[];
+  orders: Order[];
   categoriesLoading: boolean;
   menuItemsLoading: boolean;
+  ordersLoading: boolean;
   error: string | null;
+  ordersError: string | null;
 };
 
 const initialState: SetupState = {
   categories: [],
   menuItems: [],
+  orders: [],
   categoriesLoading: false,
   menuItemsLoading: false,
+  ordersLoading: false,
   error: null,
+  ordersError: null,
 };
 
 const getErrorMessage = (error: unknown): string =>
@@ -39,6 +46,7 @@ export const SetupStore = signalStore(
         error: getErrorMessage(error),
         categoriesLoading: false,
         menuItemsLoading: false,
+        ordersLoading: false,
       });
       return EMPTY;
     };
@@ -65,6 +73,27 @@ export const SetupStore = signalStore(
           }),
         ),
         catchError(handleError),
+      );
+
+    const handleOrdersError = (error: unknown): Observable<never> => {
+      patchState(store, {
+        ordersError:
+          error instanceof Error ? error.message : 'Could not load orders.',
+        ordersLoading: false,
+      });
+      return EMPTY;
+    };
+
+    const refreshOrders = (): Observable<Order[]> =>
+      setupService.getOrders().pipe(
+        tap((orders) =>
+          patchState(store, {
+            orders,
+            ordersLoading: false,
+            ordersError: null,
+          }),
+        ),
+        catchError(handleOrdersError),
       );
 
     return {
@@ -110,6 +139,14 @@ export const SetupStore = signalStore(
           switchMap(() => refreshMenuItems()),
         ),
       ),
+      loadOrders: rxMethod<void>(
+        pipe(
+          tap(() =>
+            patchState(store, { ordersLoading: true, ordersError: null }),
+          ),
+          switchMap(() => refreshOrders()),
+        ),
+      ),
       createMenuItem: rxMethod<MenuItem>(
         pipe(
           switchMap((menuItem) =>
@@ -143,9 +180,17 @@ export const SetupStore = signalStore(
     };
   }),
   withHooks({
-    onInit({ loadCategories, loadMenuItems }) {
+    onInit({ loadCategories, loadMenuItems, loadOrders }) {
       loadCategories();
       loadMenuItems();
+      loadOrders();
+
+      const setupService = inject(SetupService);
+      const destroyRef = inject(DestroyRef);
+
+      setupService.orderChanges$
+        .pipe(takeUntilDestroyed(destroyRef))
+        .subscribe(() => loadOrders());
     },
   }),
 );

@@ -1,0 +1,65 @@
+<section class="orders-page">
+  <header class="orders-header">
+    <div>
+      <span class="eyebrow">Service desk</span>
+      <h1>Orders</h1>
+      <p>Review the latest orders received from the dining room.</p>
+    </div>
+  </header>
+
+  <section class="order-stats" aria-label="Order summary">
+    <article>
+      <span>Total orders</span>
+      <strong>{{ orders().length }}</strong>
+    </article>
+    <article>
+      <span>Revenue</span>
+      <strong>{{ totalRevenue() | currency: 'USD' }}</strong>
+    </article>
+  </section>
+
+  <section class="orders-panel" aria-label="Orders">
+    @if (isLoading()) {
+      <div class="orders-status">Loading orders...</div>
+    } @else if (error()) {
+      <div class="orders-status is-error" role="alert">
+        <span>{{ error() }}</span>
+        <button mat-button type="button" (click)="loadOrders()">Try again</button>
+      </div>
+    } @else if (orders().length === 0) {
+      <div class="orders-empty">
+        <mat-icon aria-hidden="true">receipt_long</mat-icon>
+        <h2>No orders yet</h2>
+        <p>Orders placed from the menu will appear here.</p>
+      </div>
+    } @else {
+      <div class="order-list">
+        @for (order of orders(); track order.id) {
+          <article class="order-card">
+            <header class="order-card-header">
+              <div>
+                <span class="order-id">{{ order.id }}</span>
+                <time [attr.datetime]="order.createdAt">{{ order.createdAt | date: 'medium' }}</time>
+              </div>
+              <strong>{{ order.total | currency: 'USD' }}</strong>
+            </header>
+
+            <ul>
+              @for (item of order.items; track item.itemId) {
+                <li>
+                  <span>{{ item.quantity }} × {{ item.name }}</span>
+                  <strong>{{ item.price * item.quantity | currency: 'USD' }}</strong>
+                </li>
+              }
+            </ul>
+
+            <footer>
+              <span>Subtotal {{ order.subtotal | currency: 'USD' }}</span>
+              <span>Discount −{{ order.discount | currency: 'USD' }}</span>
+            </footer>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>

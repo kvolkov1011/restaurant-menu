@@ -13,5 +13,6 @@ export class App {
   readonly navItems = [
     { path: '/categories', label: 'Categories' },
     { path: '/menu-items', label: 'Menu items' },
+    { path: '/orders', label: 'Orders' },
   ];
 }

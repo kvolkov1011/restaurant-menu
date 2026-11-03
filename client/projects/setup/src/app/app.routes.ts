@@ -16,4 +16,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/setup/pages/menu-items').then((m) => m.MenuItemsPage),
   },
+  {
+    path: 'orders',
+    loadComponent: () =>
+      import('./features/setup/pages/orders').then((m) => m.OrdersPage),
+  },
 ];

@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Category, MenuItem } from '@common';
+import { Observable, fromEvent } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
+import { Category, MenuItem, Order } from '@common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SetupService {
   readonly #http = inject(HttpClient);
+  readonly #socket: Socket = io();
+
+  readonly orderChanges$ = fromEvent(this.#socket, 'orders-changed');
 
   getCategories(): Observable<Category[]> {
     return this.#http.get<Category[]>('/api/categories');
@@ -32,6 +36,10 @@ export class SetupService {
 
   getMenuItems(): Observable<MenuItem[]> {
     return this.#http.get<MenuItem[]>('/api/menu-items');
+  }
+
+  getOrders(): Observable<Order[]> {
+    return this.#http.get<Order[]>('/api/orders');
   }
 
   createMenuItem(menuItem: MenuItem): Observable<MenuItem> {

@@ -35,6 +35,10 @@ const getAvailabilityChange = (menuItem: MenuItem, requestedPrice: number): stri
   return null;
 };
 
+router.get('/orders', (_req, res) => {
+  res.json([...orders].reverse());
+});
+
 router.post('/orders', (req, res) => {
   if (!isCreateOrderRequest(req.body)) return res.status(400).json({ error: 'A valid order is required.' });
 
@@ -85,6 +89,7 @@ router.post('/orders', (req, res) => {
   };
 
   orders.push(order);
+  req.app.locals.io?.emit('orders-changed');
 
   res.status(201).json(order);
 });
