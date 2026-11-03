@@ -13,7 +13,9 @@
     "watch:menu": "ng build menu --watch --configuration development",
     "watch:management": "ng build management --watch --configuration development",
     "test": "npm run test:menu",
-    "test:menu": "ng test menu"
+    "test:menu": "ng test menu",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "test:unit:coverage": "vitest run --config vitest.config.ts --coverage"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -36,6 +38,7 @@
     "@angular/cli": "^22.2.5",
     "@angular/compiler-cli": "^22.2.0",
     "@tailwindcss/postcss": "^4.1.12",
+    "@vitest/coverage-v8": "^5.1.0",
     "concurrently": "^10.0.6",
     "jsdom": "^30.0.0",
     "postcss": "^8.5.3",

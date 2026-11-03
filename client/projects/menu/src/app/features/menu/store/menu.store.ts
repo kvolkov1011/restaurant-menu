@@ -11,6 +11,11 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, catchError, pipe, switchMap, tap } from 'rxjs';
 import { CategorySummary, HOUSE_DISCOUNT_RATE, MenuItem } from '@common';
 import { MenuService } from '../services/menu.service';
+import {
+  calculateCartSummary,
+  CartLineSnapshot,
+  resolveCartItems,
+} from './cart-calculations';
 
 type MenuState = {
   categories: CategorySummary[];
@@ -21,13 +26,7 @@ type MenuState = {
   error: string | null;
 };
 
-type CartLine = {
-  itemId: MenuItem['id'];
-  item: MenuItem;
-  quantity: number;
-  price: number;
-  userPrice: boolean;
-};
+type CartLine = CartLineSnapshot;
 
 export type CartItem = {
   item: MenuItem;
@@ -67,38 +66,13 @@ export const MenuStore = signalStore(
           ...items.map((item) => ({ kind: 'item' as const, item })),
         ]),
     );
-    const cartItems = computed<CartItem[]>(() => {
-      const currentItems = new Map(menuItems().map((item) => [item.id, item]));
-
-      return cart().map((line) => {
-        const item = currentItems.get(line.itemId) ?? {
-          ...line.item,
-          enabled: false,
-          description: 'This item is no longer available.',
-        };
-        const isUserPrice = item.userPrice === true;
-        const modeChanged = isUserPrice !== line.userPrice;
-        const price = modeChanged
-          ? item.price
-          : isUserPrice
-            ? Math.max(line.price, item.price)
-            : item.price;
-
-        return { item, quantity: line.quantity, price };
-      });
-    });
+    const cartItems = computed<CartItem[]>(() => resolveCartItems(cart(), menuItems()));
+    const cartSummary = computed(() => calculateCartSummary(cartItems()));
     const availableCartItems = computed(() => cartItems().filter((cartItem) => cartItem.item.enabled));
-    const cartCount = computed(() =>
-      availableCartItems().reduce((count, cartItem) => count + cartItem.quantity, 0),
-    );
-    const cartSubtotal = computed(() =>
-      availableCartItems().reduce(
-        (total, cartItem) => total + cartItem.price * cartItem.quantity,
-        0,
-      ),
-    );
-    const cartDiscount = computed(() => cartSubtotal() * HOUSE_DISCOUNT_RATE);
-    const cartTotal = computed(() => cartSubtotal() - cartDiscount());
+    const cartCount = computed(() => cartSummary().count);
+    const cartSubtotal = computed(() => cartSummary().subtotal);
+    const cartDiscount = computed(() => cartSummary().discount);
+    const cartTotal = computed(() => cartSummary().total);
 
     return {
       cartDiscount,

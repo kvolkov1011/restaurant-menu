@@ -1,5 +1,6 @@
 import { Request, Router } from 'express';
-import { menuItems } from '@data';
+import { categories, menuItems } from '@data';
+import { validateMenuItem } from '../validation';
 
 const router = Router();
 
@@ -12,12 +13,17 @@ router.get('/menu-items', (req, res) => {
 });
 
 router.post('/menu-item', (req, res) => {
-  const menuItem = req.body;
+  const result = validateMenuItem(req.body, new Set(categories.map((category) => category.id)));
+  if ('error' in result) return res.status(400).json(result);
 
-  menuItems.push(menuItem);
+  if (menuItems.some((item) => item.id === result.value.id)) {
+    return res.status(409).json({ error: 'A menu item with this ID already exists.' });
+  }
+
+  menuItems.push(result.value);
   notifyMenuChanged(req);
 
-  res.status(201).json(menuItem);
+  res.status(201).json(result.value);
 });
 
 router.put('/menu-item/:id', (req, res) => {
@@ -28,11 +34,17 @@ router.put('/menu-item/:id', (req, res) => {
     return res.status(404).json({ error: 'Menu item not found' });
   }
 
-  const menuItem = { ...req.body, id };
-  menuItems[menuItemIndex] = menuItem;
+  const result = validateMenuItem(
+    req.body,
+    new Set(categories.map((category) => category.id)),
+    id,
+  );
+  if ('error' in result) return res.status(400).json(result);
+
+  menuItems[menuItemIndex] = result.value;
   notifyMenuChanged(req);
 
-  res.json(menuItem);
+  res.json(result.value);
 });
 
 router.delete('/menu-item/:id', (req, res) => {
